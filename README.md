@@ -1,17 +1,10 @@
-# raspberry-pi-passive-dropbox
+# Raspberry-pi-Passive-Dropbox
+
 A hands-on network monitoring lab demonstrating passive traffic capture, PCAP analysis, and log aggregation using a Raspberry Pi for blue-team security practice.
-# Raspberry Pi Passive Network Drop Box 🛡️
-
-A Blue Team–focused, beginner-friendly passive network monitoring lab built using a **Raspberry Pi Zero 2 W**.
-
-This project captures and analyzes Ethernet traffic for defensive security learning, visibility, and baseline network behavior analysis. The system runs continuously, saves rolling PCAP files, and allows offline analysis using **Wireshark** — without actively scanning or interacting with any devices.
-
 ---
 
 ## ⚠️ Disclaimer
-
-This project is for **educational and authorized environments only**.  
-Only monitor networks you own or have explicit permission to observe.  
+This project is for **educational and authorized environments only**.  Only monitor networks you own or have explicit permission to observe.  
 This lab focuses on **passive visibility**, not exploitation.
 
 ---
