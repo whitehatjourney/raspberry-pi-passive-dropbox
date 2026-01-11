@@ -1,0 +1,63 @@
+# Raspberry Pi Passive Network Drop Box – Lab Write-Up
+
+## Objective
+
+The goal of this lab was to build a **passive network monitoring device** using a Raspberry Pi Zero 2 W to observe and analyze normal Ethernet traffic for **Blue Team / defensive security learning**.
+
+The focus of the project was:
+
+- Passive visibility  
+- Network traffic analysis  
+- Baseline behavior identification  
+- Ethical, authorized monitoring  
+
+No active scanning, probing, or exploitation was performed.
+
+---
+
+## Hardware & Software
+
+### Hardware
+- Raspberry Pi Zero 2 W  
+- USB-to-Ethernet adapter  
+- MicroSD card  
+- Power cable  
+
+### Software
+- Raspberry Pi OS  
+- `tcpdump`  
+- ARPWatch  
+- SSH / SCP  
+- Wireshark  
+
+---
+
+## Lab Environment
+
+The Raspberry Pi was connected to the local network using Ethernet.  
+Remote access was enabled via SSH for management and file transfers.
+
+All monitoring was performed in an **authorized environment**.
+
+---
+
+## Setup Process
+
+1. Installed Raspberry Pi OS on the MicroSD card  
+2. Enabled SSH for remote access  
+3. Connected the Pi to the network using a USB-to-Ethernet adapter  
+4. Verified the Pi received an IP address  
+5. Confirmed SSH access from a main computer  
+
+---
+
+## Traffic Capture Configuration
+
+A background service was configured to run `tcpdump` continuously on the Ethernet interface.
+
+Capture settings:
+
+- Interface: `eth0`  
+- File rotation: Every **10 minutes**  
+- Retention: ~**12 hours** (72 files)  
+- Storage location:
