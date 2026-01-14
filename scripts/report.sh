@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# report.sh
+# Generates a 12-hour summary of captured PCAP files, including
+# top protocols, top source/destination IPs, and ARP/DNS/DHCP counts.
 set -euo pipefail
 
 PCAPDIR="/var/log/dropbox/pcap"
