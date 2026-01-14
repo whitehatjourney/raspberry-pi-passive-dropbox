@@ -8,50 +8,26 @@ PCAPDIR="/var/log/dropbox/pcap"
 OUTDIR="/var/log/dropbox/reports"
 mkdir -p "$OUTDIR"
 
-TS="$(date +%F_%H%M)"
-OUTFILE="${OUTDIR}/summary_${TS}.txt"
+OUTFILE="${OUTDIR}/daily_$(date +%F).txt"
 
-mapfile -t pcaps < <(find "$PCAPDIR" -type f -name "*.pcap" -mmin -720 2>/dev/null | sort)
+echo "==== Drop Box Daily Summary ($(date)) ====" >> "$OUTFILE"
+echo "" >> "$OUTFILE"
 
-{
-  echo "==== Drop Box Summary (Last 12 Hours) ===="
-  echo "Generated: $(date)"
-  echo "PCAP files included: ${#pcaps[@]}"
-  echo
-} >> "$OUTFILE"
+# Count packets by simple protocol hints (ARP/DHCP/DNS) using tshark
+echo "-- Packet counts (ARP/DHCP/DNS) --" >> "$OUTFILE"
+tshark -r "${PCAPDIR}"/*.pcap -q -z io,phs 2>/dev/null | tail -n +1 >> "$OUTFILE" || true
+echo "" >> "$OUTFILE"
 
-if (( ${#pcaps[@]} == 0 )); then
-  echo "No PCAP files found." >> "$OUTFILE"
-  exit 0
-fi
+# Top talkers by IP (very rough, but useful)
+echo "-- Top source IPs (approx) --" >> "$OUTFILE"
+tshark -r "${PCAPDIR}"/*.pcap -T fields -e ip.src 2>/dev/null \
+  | grep -E '^[0-9]+\.' | sort | uniq -c | sort -nr | head -n 20 >> "$OUTFILE" || true
+echo "" >> "$OUTFILE"
 
-{
-  echo "-- Total Packet Count (approx lines read) --"
-  tshark -r "${pcaps[@]}" -q 2>/dev/null | wc -l
-  echo
+echo "-- Top destination IPs (approx) --" >> "$OUTFILE"
+tshark -r "${PCAPDIR}"/*.pcap -T fields -e ip.dst 2>/dev/null \
+  | grep -E '^[0-9]+\.' | sort | uniq -c | sort -nr | head -n 20 >> "$OUTFILE" || true
+echo "" >> "$OUTFILE"
 
-  echo "-- Top Protocols --"
-  tshark -r "${pcaps[@]}" -T fields -e _ws.col.Protocol 2>/dev/null \
-    | sort | uniq -c | sort -nr | head -n 15
-  echo
-
-  echo "-- Top Source IPs --"
-  tshark -r "${pcaps[@]}" -T fields -e ip.src 2>/dev/null \
-    | grep -E '^[0-9]+\.' | sort | uniq -c | sort -nr | head -n 15
-  echo
-
-  echo "-- Top Destination IPs --"
-  tshark -r "${pcaps[@]}" -T fields -e ip.dst 2>/dev/null \
-    | grep -E '^[0-9]+\.' | sort | uniq -c | sort -nr | head -n 15
-  echo
-
-  echo "-- ARP / DNS / DHCP Counts --"
-  echo "ARP:   $(tshark -r "${pcaps[@]}" -Y arp   -q 2>/dev/null | wc -l)"
-  echo "DNS:   $(tshark -r "${pcaps[@]}" -Y dns   -q 2>/dev/null | wc -l)"
-  echo "DHCP:  $(tshark -r "${pcaps[@]}" -Y bootp -q 2>/dev/null | wc -l)"
-  echo
-
-  echo "==== End ===="
-} >> "$OUTFILE"
-
-echo "Wrote: $OUTFILE"
+echo "==== End ====" >> "$OUTFILE"
+echo "" >> "$OUTFILE"
