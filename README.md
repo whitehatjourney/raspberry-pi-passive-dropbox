@@ -11,7 +11,7 @@ This lab focuses on **passive visibility**, not exploitation.
 
 ## What This Project Does
 
-- Passively captures Ethernet traffic using `tcpdump`  
+- Passively captures Ethernet traffic using tcpdump
 - Saves PCAP files in **10-minute segments**  
 - Retains ~**12 hours** of rolling capture history  
 - Allows offline analysis with **Wireshark**  
@@ -21,8 +21,6 @@ This lab focuses on **passive visibility**, not exploitation.
   - DNS activity  
   - Broadcast traffic  
   - Normal LAN behavior  
-
-No scanning, probing, or exploitation is performed.
 
 ---
 
@@ -44,7 +42,7 @@ No scanning, probing, or exploitation is performed.
 
 ### Software
 - Raspberry Pi OS  
-- `tcpdump`  
+- tcpdump
 - ARPWatch  
 - SSH / SCP  
 - Wireshark (for analysis)  
@@ -54,7 +52,7 @@ No scanning, probing, or exploitation is performed.
 ## Project Setup Overview
 
 - Installed Raspberry Pi OS  
-- Enabled SSH for remote access  
+- Enabled SSH for remote access during setup
 - Connected the Pi to the network via Ethernet  
 - Configured `tcpdump` to:
   - Capture all visible traffic  
@@ -64,12 +62,38 @@ No scanning, probing, or exploitation is performed.
 - Exported a capture to a main computer  
 - Analyzed traffic using Wireshark  
 
----
-
-## Traffic Capture Details
+Traffic Capture Details
 
 Each capture file:
 
 - Covers **10 minutes** of traffic  
 - Is stored in:
+---
+
+## Installation
+
+Update the system:
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+Install required tools:
+```bash
+sudo apt install -y tcpdump tshark arpwatch openssh-server
+```
+Enable SSH:
+```bash
+sudo systemctl enable ssh
+sudo systemctl start ssh
+```
+Create the project directory:
+```bash
+sudo mkdir -p /opt/dropbox
+sudo chown $USER:$USER /opt/dropbox
+```
+Copy the scripts into /opt/dropbox and make them exectutable:
+```bash
+chmode +x /opt/dropbox/*.sh
+```
+---
 
