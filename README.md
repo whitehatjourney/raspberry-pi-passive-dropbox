@@ -91,9 +91,15 @@ Create the project directory:
 sudo mkdir -p /opt/dropbox
 sudo chown $USER:$USER /opt/dropbox
 ```
+Clone the repository to your Raspberry Pi
+```bash
+git clone https://github.com/whitehatjourney/raspberry-pi-passive-dropbox.git
+cd raspberry-pi-passive-dropbox
+```
 Copy the scripts into /opt/dropbox and make them exectutable:
 ```bash
-chmode +x /opt/dropbox/*.sh
+sudo cp scripts/*.sh /opt/dropbox/
+sudo chmod +x /opt/dropbox/*.sh
 ```
 ---
 
