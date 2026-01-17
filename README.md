@@ -91,6 +91,11 @@ Create the project directory:
 sudo mkdir -p /opt/dropbox
 sudo chown $USER:$USER /opt/dropbox
 ```
+Install git
+```bash
+sudo apt update
+sudo apt install git -y
+```
 Clone the repository to your Raspberry Pi
 ```bash
 git clone https://github.com/whitehatjourney/raspberry-pi-passive-dropbox.git
