@@ -91,15 +91,30 @@ Create the project directory:
 sudo mkdir -p /opt/dropbox
 sudo chown $USER:$USER /opt/dropbox
 ```
-Install git
+Install git:
 ```bash
 sudo apt update
 sudo apt install git -y
 ```
-Clone the repository to your Raspberry Pi
+Clone the repository to your Raspberry Pi:
 ```bash
 git clone https://github.com/whitehatjourney/raspberry-pi-passive-dropbox.git
 cd raspberry-pi-passive-dropbox
+```
+Navigate to the project directory before copying the scripts:
+```bash
+cd raspberry-pi-passive-dropbox
+```
+Verify the scipts exist:
+```bash
+ls scripts
+```
+You should see:
+```bash
+capture.sh
+export-all.sh
+mast-sumary.sh
+report.sh
 ```
 Copy the scripts into /opt/dropbox and make them exectutable:
 ```bash
