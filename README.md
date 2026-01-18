@@ -96,6 +96,32 @@ Install git:
 sudo apt update
 sudo apt install git -y
 ```
+## Automation (systemd)
+
+(Optional) Install and enable systemd services so capture starts on boot and reports run automatically.
+
+Copy service/timer files:
+
+```bash
+sudo cp systemd/*.service /etc/systemd/system/
+sudo cp systemd/*.timer /etc/systemd/system/
+```
+Reload system:
+```bash
+sudo systemctl daemon-reload
+```
+Enable capture on boot:
+```bash
+sudo systemctl enable --now dropbox-capture.service
+```
+Enable scheduled reporting:
+```bash
+sudo systemctl enable --now dropbox-report.timer
+```
+Verify timers:
+```bash
+systemctl list-timers --all | grep dropbox
+```
 Clone the repository to your Raspberry Pi:
 ```bash
 git clone https://github.com/whitehatjourney/raspberry-pi-passive-dropbox.git
