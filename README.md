@@ -72,80 +72,68 @@ Each capture file:
 
 ## Installation
 
-Update the system:
+On your Raspberry Pi:
 
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-Install required tools:
-```bash
-sudo apt install -y tcpdump tshark arpwatch openssh-server
-```
-Enable SSH:
-```bash
-sudo systemctl enable ssh
-sudo systemctl start ssh
-```
-Create the project directory:
-```bash
-sudo mkdir -p /opt/dropbox
-sudo chown $USER:$USER /opt/dropbox
-```
-Install git:
-```bash
-sudo apt update
-sudo apt install git -y
-```
-## Automation (systemd)
-
-(Optional) Install and enable systemd services so capture starts on boot and reports run automatically.
-
-Copy service/timer files:
-
-```bash
-sudo cp systemd/*.service /etc/systemd/system/
-sudo cp systemd/*.timer /etc/systemd/system/
-```
-Reload system:
-```bash
-sudo systemctl daemon-reload
-```
-Enable capture on boot:
-```bash
-sudo systemctl enable --now dropbox-capture.service
-```
-Enable scheduled reporting:
-```bash
-sudo systemctl enable --now dropbox-report.timer
-```
-Verify timers:
-```bash
-systemctl list-timers --all | grep dropbox
-```
-Clone the repository to your Raspberry Pi:
 ```bash
 git clone https://github.com/whitehatjourney/raspberry-pi-passive-dropbox.git
 cd raspberry-pi-passive-dropbox
+sudo bash install.sh
 ```
-Navigate to the project directory before copying the scripts:
-```bash
-cd raspberry-pi-passive-dropbox
-```
-Verify the scipts exist:
-```bash
-ls scripts
-```
-You should see:
-```bash
-capture.sh
-export-all.sh
-mast-sumary.sh
-report.sh
-```
-Copy the scripts into /opt/dropbox and make them exectutable:
-```bash
-sudo cp scripts/*.sh /opt/dropbox/
-sudo chmod +x /opt/dropbox/*.sh
-```
----
+This installer will:
 
+Install required tools
+Enable SSH
+Create all directories
+Install the scripts
+Configure systemd services
+Start packet capture automatically
+```
+Script Overview
+
+capture.sh
+Runs tcpdump to passively capture Ethernet traffic in 10-minute PCAP files.
+Files rotate automatically to prevent disk overuse.
+
+report.sh
+Generates a 12-hour summary report showing:
+Top protocols
+Top source IPs
+Top destination IPs
+ARP / DNS / DHCP counts
+
+export_all.sh
+Creates a single consolidated export file containing:
+Capture service status
+Restart history
+ARPWatch logs
+Latest summary report
+PCAP time window
+Protocol statistics
+
+master_summary.sh (Optional)
+Generates a quick dashboard-style summary in one file.
+```
+Verify the lab is working
+```bash
+systemctl status dropbox-capture.service --no-pager
+```
+Check PCAP files:
+```bash
+ls -lh /var/log/dropbox/pcap | tail
+```
+Check report timer:
+```bash
+systemctl list-timers --all | grep dropbox
+```
+Analyzing Captured Traffic
+Copy a PCAP file to your main computer:
+```bash
+scp user@PI_IP:/var/log/dropbox/pcap/capture_YYYY-MM-DD_HH-MM-SS.pcap .
+```
+Open it in Wireshark and try filters like:
+
+dns
+arp
+mdns
+ip.addr == 192.168.1.1
+```
