@@ -68,6 +68,10 @@ Each capture file:
 
 - Covers **10 minutes** of traffic  
 - Is stored in:
+`/var/log/dropbox/pcap/`
+
+Reports are stored in:
+- `/var/log/dropbox/reports/`
 ---
 
 ## Installation
@@ -81,12 +85,12 @@ sudo bash install.sh
 ```
 This installer will:
 
-Install required tools
-Enable SSH
-Create all directories
-Install the scripts
-Configure systemd services
-Start packet capture automatically
+-Install required tools
+-Enable SSH
+-Create all directories
+-Install the scripts
+-Configure systemd services
+-Start packet capture automatically
 ```
 Script Overview
 
@@ -116,13 +120,7 @@ Generates a quick dashboard-style summary in one file.
 Verify the lab is working
 ```bash
 systemctl status dropbox-capture.service --no-pager
-```
-Check PCAP files:
-```bash
 ls -lh /var/log/dropbox/pcap | tail
-```
-Check report timer:
-```bash
 systemctl list-timers --all | grep dropbox
 ```
 Analyzing Captured Traffic
@@ -132,8 +130,7 @@ scp user@PI_IP:/var/log/dropbox/pcap/capture_YYYY-MM-DD_HH-MM-SS.pcap .
 ```
 Open it in Wireshark and try filters like:
 
-dns
-arp
-mdns
-ip.addr == 192.168.1.1
-```
+-dns
+-arp
+-mdns
+-ip.addr == 192.168.1.1
