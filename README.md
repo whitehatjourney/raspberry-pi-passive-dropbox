@@ -123,10 +123,10 @@ systemctl status dropbox-capture.service --no-pager
 ls -lh /var/log/dropbox/pcap | tail
 systemctl list-timers --all | grep dropbox
 ```
-Analyzing Captured Traffic
-Copy a PCAP file to your main computer:
+Exporting Logs to a Windows PC
 ```bash
-scp user@PI_IP:/var/log/dropbox/pcap/capture_YYYY-MM-DD_HH-MM-SS.pcap .
+scp pi@<PI_IP>:/var/log/dropbox/reports/daily_YYYY-MM-DD.txt C:\DropBox\
+scp pi@<PI_IP>:/var/log/dropbox/pcap/capture_YYYY-MM-DD_HH-MM-SS.pcap C:\DropBox\
 ```
 Open it in Wireshark and try filters like:
 
