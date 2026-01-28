@@ -1,32 +1,33 @@
 #!/usr/bin/env bash
-# report.sh
-# Generates a 12-hour summary of captured PCAP files, including
-# top protocols, top source/destination IPs, and ARP/DNS/DHCP counts.
 set -euo pipefail
 
 PCAPDIR="/var/log/dropbox/pcap"
 OUTDIR="/var/log/dropbox/reports"
 mkdir -p "$OUTDIR"
-
 OUTFILE="${OUTDIR}/daily_$(date +%F).txt"
 
 echo "==== Drop Box Daily Summary ($(date)) ====" >> "$OUTFILE"
 echo "" >> "$OUTFILE"
 
-# Count packets by simple protocol hints (ARP/DHCP/DNS) using tshark
-echo "-- Packet counts (ARP/DHCP/DNS) --" >> "$OUTFILE"
-tshark -r "${PCAPDIR}"/*.pcap -q -z io,phs 2>/dev/null | tail -n +1 >> "$OUTFILE" || true
-echo "" >> "$OUTFILE"
+mapfile -t PCAPFILES < <(ls -t "${PCAPDIR}"/*.pcap 2>/dev/null | head -n 13 | tail -n 12)
 
-# Top talkers by IP (very rough, but useful)
-echo "-- Top source IPs (approx) --" >> "$OUTFILE"
-tshark -r "${PCAPDIR}"/*.pcap -T fields -e ip.src 2>/dev/null \
-  | grep -E '^[0-9]+\.' | sort | uniq -c | sort -nr | head -n 20 >> "$OUTFILE" || true
-echo "" >> "$OUTFILE"
+echo "-- Packet counts (ARP/DHCP/DNS/mDNS) --" >> "$OUTFILE"
 
-echo "-- Top destination IPs (approx) --" >> "$OUTFILE"
-tshark -r "${PCAPDIR}"/*.pcap -T fields -e ip.dst 2>/dev/null \
-  | grep -E '^[0-9]+\.' | sort | uniq -c | sort -nr | head -n 20 >> "$OUTFILE" || true
+ARP=0; DHCP=0; DNS=0; MDNS=0
+
+if [ ${#PCAPFILES[@]} -gt 0 ]; then
+  for f in "${PCAPFILES[@]}"; do
+    ARP=$((ARP + $(/usr/bin/tshark -r "$f" -Y arp  2>/dev/null | wc -l)))
+    DHCP=$((DHCP + $(/usr/bin/tshark -r "$f" -Y dhcp 2>/dev/null | wc -l)))
+    DNS=$((DNS + $(/usr/bin/tshark -r "$f" -Y dns  2>/dev/null | wc -l)))
+    MDNS=$((MDNS + $(/usr/bin/tshark -r "$f" -Y mdns 2>/dev/null | wc -l)))
+  done
+fi
+
+echo "arp:  $ARP"  >> "$OUTFILE"
+echo "dhcp: $DHCP" >> "$OUTFILE"
+echo "dns:  $DNS"  >> "$OUTFILE"
+echo "mdns: $MDNS" >> "$OUTFILE"
 echo "" >> "$OUTFILE"
 
 echo "==== End ====" >> "$OUTFILE"
